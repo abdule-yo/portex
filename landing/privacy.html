@@ -1,0 +1,182 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Privacy Policy — Portex</title>
+    <style>
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      :root {
+        --bg: #0a0a0d;
+        --surface: #12121a;
+        --border: #22222d;
+        --text: #e8e8f0;
+        --muted: #606070;
+        --accent: #7c6ef7;
+      }
+      body {
+        background: var(--bg);
+        color: var(--text);
+        font-family:
+          system-ui,
+          -apple-system,
+          sans-serif;
+        line-height: 1.7;
+      }
+      a {
+        color: var(--accent);
+      }
+      nav {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 20px 32px;
+        border-bottom: 1px solid var(--border);
+        max-width: 720px;
+        margin: 0 auto;
+      }
+      .logo {
+        font-size: 18px;
+        font-weight: 700;
+        letter-spacing: -0.4px;
+      }
+      .logo span {
+        color: var(--accent);
+      }
+      main {
+        max-width: 720px;
+        margin: 0 auto;
+        padding: 48px 32px 80px;
+      }
+      h1 {
+        font-size: 28px;
+        font-weight: 800;
+        letter-spacing: -0.5px;
+        margin-bottom: 8px;
+      }
+      .meta {
+        font-size: 13px;
+        color: var(--muted);
+        margin-bottom: 40px;
+      }
+      h2 {
+        font-size: 17px;
+        font-weight: 700;
+        margin: 32px 0 10px;
+      }
+      p,
+      li {
+        font-size: 14px;
+        color: #b0b0c0;
+        margin-bottom: 10px;
+      }
+      ul {
+        padding-left: 20px;
+      }
+      li {
+        margin-bottom: 6px;
+      }
+      footer {
+        border-top: 1px solid var(--border);
+        text-align: center;
+        padding: 20px;
+        font-size: 12px;
+        color: var(--muted);
+      }
+    </style>
+  </head>
+  <body>
+    <nav>
+      <a class="logo" href="index.html">Por<span>tex</span></a>
+    </nav>
+
+    <main>
+      <h1>Privacy Policy</h1>
+      <p class="meta">Effective: February 2026 · Last updated: February 2026</p>
+
+      <h2>Summary</h2>
+      <p>
+        Portex is designed around one principle:
+        <strong>your data stays on your device</strong>. We do not operate
+        servers that receive, store, or process your conversations.
+      </p>
+
+      <h2>Data We Store</h2>
+      <p>
+        All data is stored exclusively in <code>chrome.storage.local</code> on
+        your own machine:
+      </p>
+      <ul>
+        <li>Saved chat sessions (messages, titles, timestamps)</li>
+        <li>Generated summaries</li>
+        <li>
+          Your API key (encrypted at rest by Chrome — never readable by us)
+        </li>
+        <li>Extension settings (preferred model, theme)</li>
+      </ul>
+
+      <h2>Data We Never Collect</h2>
+      <ul>
+        <li>We have no backend server — there is nothing to send data to.</li>
+        <li>We do not use analytics, tracking pixels, or third-party SDKs.</li>
+        <li>
+          We do not transmit your conversations to any service we operate.
+        </li>
+      </ul>
+
+      <h2>Third-Party API Calls (Optional)</h2>
+      <p>
+        If you choose to enter an OpenAI or Anthropic API key, the extension
+        will send your session content directly from your browser to those
+        providers' APIs for summarization. This is optional — local compression
+        works without any API key. Portex does not proxy, log, or intercept
+        these requests.
+      </p>
+      <p>Please review the privacy policies of those providers separately:</p>
+      <ul>
+        <li>
+          <a href="https://openai.com/privacy" target="_blank" rel="noopener"
+            >OpenAI Privacy Policy</a
+          >
+        </li>
+        <li>
+          <a
+            href="https://www.anthropic.com/privacy"
+            target="_blank"
+            rel="noopener"
+            >Anthropic Privacy Policy</a
+          >
+        </li>
+      </ul>
+
+      <h2>Permissions Used</h2>
+      <ul>
+        <li>
+          <strong>storage</strong> — to save sessions locally in your browser.
+        </li>
+        <li>
+          <strong>tabs / activeTab / scripting</strong> — to read the current
+          chat page and inject context into the target provider's input box. We
+          only access tabs you explicitly interact with via the extension popup.
+        </li>
+      </ul>
+
+      <h2>Changes</h2>
+      <p>
+        If this policy changes materially, we will update the "Last updated"
+        date above and note the changes in the Chrome Web Store listing.
+      </p>
+
+      <h2>Contact</h2>
+      <p>Questions? Open an issue on our GitHub repository.</p>
+    </main>
+
+    <footer>&copy; 2026 Portex</footer>
+  </body>
+</html>

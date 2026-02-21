@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Portex — Portable AI Context</title>
+    <meta name="description" content="Save, summarize, and inject AI chat context across ChatGPT, Claude, and Gemini. Your data stays local." />
+    <style>
+      *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+      :root {
+        --bg:      #0a0a0d;
+        --surface: #12121a;
+        --border:  #22222d;
+        --text:    #e8e8f0;
+        --muted:   #606070;
+        --accent:  #7c6ef7;
+        --max-w:   720px;
+      }
+
+      body {
+        background: var(--bg);
+        color: var(--text);
+        font-family: system-ui, -apple-system, sans-serif;
+        line-height: 1.6;
+        min-height: 100vh;
+      }
+
+      a { color: var(--accent); text-decoration: none; }
+      a:hover { text-decoration: underline; }
+
+      nav {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 20px 32px;
+        border-bottom: 1px solid var(--border);
+        max-width: var(--max-w);
+        margin: 0 auto;
+      }
+      .logo { font-size: 18px; font-weight: 700; letter-spacing: -0.4px; }
+      .logo span { color: var(--accent); }
+      nav a { font-size: 13px; color: var(--muted); }
+
+      .hero {
+        max-width: var(--max-w);
+        margin: 0 auto;
+        padding: 80px 32px 60px;
+        text-align: center;
+      }
+      .hero h1 {
+        font-size: clamp(28px, 5vw, 48px);
+        font-weight: 800;
+        letter-spacing: -1px;
+        line-height: 1.15;
+        margin-bottom: 20px;
+      }
+      .hero h1 .highlight { color: var(--accent); }
+      .hero p {
+        font-size: 16px;
+        color: var(--muted);
+        max-width: 500px;
+        margin: 0 auto 36px;
+      }
+      .cta {
+        display: inline-block;
+        padding: 13px 28px;
+        background: var(--accent);
+        border-radius: 8px;
+        color: #fff;
+        font-size: 14px;
+        font-weight: 600;
+        transition: opacity 0.15s;
+      }
+      .cta:hover { opacity: 0.85; text-decoration: none; }
+
+      .features {
+        max-width: var(--max-w);
+        margin: 0 auto;
+        padding: 0 32px 80px;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 20px;
+      }
+      .feature {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        padding: 22px;
+      }
+      .feature-icon { font-size: 24px; margin-bottom: 10px; }
+      .feature h3 { font-size: 14px; font-weight: 600; margin-bottom: 6px; }
+      .feature p { font-size: 12px; color: var(--muted); line-height: 1.5; }
+
+      .flow {
+        max-width: var(--max-w);
+        margin: 0 auto;
+        padding: 0 32px 80px;
+      }
+      .flow h2 { font-size: 20px; font-weight: 700; margin-bottom: 24px; }
+      .steps { display: flex; flex-direction: column; gap: 16px; }
+      .step {
+        display: flex;
+        gap: 16px;
+        align-items: flex-start;
+        padding: 16px;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+      }
+      .step-num {
+        flex-shrink: 0;
+        width: 28px; height: 28px;
+        border-radius: 50%;
+        background: var(--accent);
+        display: flex; align-items: center; justify-content: center;
+        font-size: 12px; font-weight: 700; color: #fff;
+      }
+      .step-text { font-size: 13px; color: var(--muted); }
+      .step-text strong { color: var(--text); }
+
+      .privacy-badge {
+        max-width: var(--max-w);
+        margin: 0 auto;
+        padding: 0 32px 60px;
+        text-align: center;
+        font-size: 13px;
+        color: var(--muted);
+      }
+      .privacy-badge a { color: var(--accent); }
+
+      footer {
+        border-top: 1px solid var(--border);
+        text-align: center;
+        padding: 20px 32px;
+        font-size: 12px;
+        color: var(--muted);
+      }
+    </style>
+  </head>
+
+  <body>
+    <nav>
+      <div class="logo">Por<span>tex</span></div>
+      <a href="privacy.html">Privacy</a>
+    </nav>
+
+    <section class="hero">
+      <h1>Your AI context,<br /><span class="highlight">everywhere you work.</span></h1>
+      <p>Save conversations from any AI provider, summarize them locally, and inject that context into any other provider — no copy-pasting required.</p>
+      <a href="#" class="cta">Add to Chrome — Free</a>
+    </section>
+
+    <section class="features">
+      <div class="feature">
+        <div class="feature-icon">💾</div>
+        <h3>Save Any Chat</h3>
+        <p>One click to capture the full conversation from ChatGPT, Claude, or Gemini.</p>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">⚡</div>
+        <h3>Smart Summarize</h3>
+        <p>Local compression keeps recent messages verbatim; older messages are condensed. No API key needed.</p>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">🔁</div>
+        <h3>Inject Context</h3>
+        <p>Paste a perfectly formatted context prompt into any AI provider's input box in one click.</p>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">🔒</div>
+        <h3>100% Local</h3>
+        <p>All sessions are stored in your browser. Nothing is sent to our servers. Ever.</p>
+      </div>
+    </section>
+
+    <section class="flow">
+      <h2>How it works</h2>
+      <div class="steps">
+        <div class="step">
+          <div class="step-num">1</div>
+          <div class="step-text"><strong>Open a ChatGPT or Claude conversation</strong> and click the Portex icon.</div>
+        </div>
+        <div class="step">
+          <div class="step-num">2</div>
+          <div class="step-text"><strong>Click "Save Current Chat"</strong> — the extension reads the page and stores the session locally.</div>
+        </div>
+        <div class="step">
+          <div class="step-num">3</div>
+          <div class="step-text"><strong>Click "Summarize"</strong> to compress the session (optional: use your own AI API key for better quality).</div>
+        </div>
+        <div class="step">
+          <div class="step-num">4</div>
+          <div class="step-text"><strong>Select a target provider and click "Inject"</strong> — Portex opens the tab and pastes the context for you.</div>
+        </div>
+      </div>
+    </section>
+
+    <div class="privacy-badge">
+      🔒 Your data never leaves your browser. Read our <a href="privacy.html">Privacy Policy</a>.
+    </div>
+
+    <footer>
+      &copy; 2026 Portex · Built with Go &amp; WebAssembly
+    </footer>
+  </body>
+</html>

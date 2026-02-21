@@ -1,0 +1,14 @@
+# Generated WASM build artifacts (run `make build` to regenerate)
+extension/portex.wasm
+extension/wasm_exec.js
+
+# Go build cache
+wasm/vendor/
+
+# macOS
+.DS_Store
+
+# Editor
+.vscode/
+.idea/
+*.swp
