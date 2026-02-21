@@ -69,8 +69,7 @@ This compiles Go → `extension/portex.wasm` and copies `wasm_exec.js` from your
 
 ### Load the Extension
 
-1. Add icon PNGs to `extension/icons/` (16x16, 48x48, 128x128)
-2. Open `chrome://extensions`
+1. Open `chrome://extensions`
 3. Enable **Developer Mode**
 4. Click **Load unpacked** → select the `extension/` folder
 
@@ -145,8 +144,8 @@ Stored in `chrome.storage.local` under keys `portex_sessions` and `portex_settin
 
 ## Roadmap
 
-- [ ] ChatGPT end-to-end (save, summarize, inject)
-- [ ] Claude end-to-end
+- [x] ChatGPT end-to-end (save, summarize, inject)
+- [x] Claude end-to-end
 - [ ] Gemini scraper support
 - [ ] Session tagging and filtering
 - [ ] Import sessions from JSON
