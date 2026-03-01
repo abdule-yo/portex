@@ -14,7 +14,13 @@ build: copy-exec
 
 ## copy-exec: copy the Go runtime WASM helper from the installed Go toolchain
 copy-exec:
-	@cp "$$(go env GOROOT)/misc/wasm/wasm_exec.js" $(OUT_DIR)/wasm_exec.js
+	@if [ -f "$$(go env GOROOT)/misc/wasm/wasm_exec.js" ]; then \
+		cp "$$(go env GOROOT)/misc/wasm/wasm_exec.js" $(OUT_DIR)/wasm_exec.js; \
+	elif [ -f "$$(go env GOROOT)/lib/wasm/wasm_exec.js" ]; then \
+		cp "$$(go env GOROOT)/lib/wasm/wasm_exec.js" $(OUT_DIR)/wasm_exec.js; \
+	else \
+		echo "Error: could not find wasm_exec.js in GOROOT" && exit 1; \
+	fi
 	@echo "✓ Copied wasm_exec.js"
 
 ## clean: remove build artifacts
@@ -25,7 +31,7 @@ clean:
 ## Install: brew install binaryen
 compress: build
 	@if command -v wasm-opt >/dev/null 2>&1; then \
-		wasm-opt -Oz --enable-bulk-memory \
+		wasm-opt -Oz --enable-bulk-memory --enable-sign-ext --enable-nontrapping-float-to-int \
 			-o $(OUT_DIR)/$(BINARY) $(OUT_DIR)/$(BINARY) && \
 		echo "✓ Compressed with wasm-opt"; \
 	else \

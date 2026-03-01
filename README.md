@@ -128,19 +128,21 @@ Stored in `chrome.storage.local` under keys `portex_sessions` and `portex_settin
 
 ## Contributing
 
+Contributions are highly welcome! Whether you're fixing bugs, adding new AI providers (like Gemini), or improving the UI.
+
 1. Fork the repo
 2. Create a feature branch (`git checkout -b feat/my-feature`)
-3. Make your changes
-4. Run `cd wasm && make build` to verify Go compiles
-5. Load the extension in Chrome and test manually
-6. Open a pull request
+3. Make your changes in `extension/` (JS/HTML) or `wasm/` (Go)
+4. Run `cd wasm && make build` to compile the Go code into WASM.
+5. Load the extension in Chrome (`chrome://extensions` -> Load unpacked) and test manually
+6. Open a Pull Request!
 
-### Build Order for New Contributors
+### Developer Guide & Navigation
 
-1. Get `make build` working — verify WASM loads in browser console
-2. Test `parseSession` with ChatGPT
-3. Wire save → summarize → inject end-to-end
-4. Add Claude/Gemini scraper support (see `scraper.js`)
+To help you get started quickly:
+- **Adding a new AI Provider?** Check `extension/scraper.js` to see how DOM messages are extracted, then look at `wasm/parser.go` if the data structure needs specific handling.
+- **Modifying the UI?** Update `extension/popup.html` and `extension/popup.js` (No build required for JS changes, just hit the refresh icon on your extension).
+- **WASM Bridge:** If you create a new Go function, make sure to export it in `wasm/main.go` and add a wrapper in `extension/wasm_bridge.js`.
 
 ## Roadmap
 
