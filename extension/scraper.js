@@ -57,9 +57,110 @@
     return messages;
   }
 
+  // Gemini uses Angular custom elements confirmed via live DOM inspection:
+  //   User turns:  <user-query>  → text inside <user-query-content>
+  //   Model turns: <model-response> → text inside <message-content>
+  //
+  // The outer elements include "You said" / "Gemini said" aria labels in
+  // their innerText, so we must target the inner content elements directly.
   function scrapeGemini() {
-    throw new Error('Gemini scraping is not supported yet.');
+    const structured = scrapeGeminiStructured();
+    if (structured.length > 0) return structured;
+
+    // Fallback: class-name heuristics in case Gemini updates its custom elements
+    const heuristic = scrapeGeminiHeuristic();
+    if (heuristic.length > 0) return heuristic;
+
+    throw new Error(
+      'Could not find Gemini messages. ' +
+      'Make sure you are on a Gemini conversation page (not the home screen).',
+    );
   }
+
+  function scrapeGeminiStructured() {
+    const messages = [];
+
+    // Query both custom element types in a single pass, then sort by DOM order
+    const allTurns = Array.from(
+      document.querySelectorAll('user-query, model-response'),
+    ).sort((a, b) => (a.compareDocumentPosition(b) & 4 ? -1 : 1));
+
+    for (const turn of allTurns) {
+      const isUser = turn.tagName.toLowerCase() === 'user-query';
+
+      let contentEl;
+      if (isUser) {
+        // Confirmed DOM structure (Angular):
+        //   <user-query>
+        //     <span class="cdk-visually-hidden ...">You said</span>  ← screen-reader only
+        //     <user-query-content>
+        //       <div class="query-content ...">
+        //         <p class="query-text-line ...">actual user text</p>
+        //       </div>
+        //     </user-query-content>
+        //
+        // Target p.query-text-line directly to skip the hidden aria label.
+        const queryContent = turn.querySelector('div.query-content');
+        const textLine = turn.querySelector('p.query-text-line');
+
+        if (textLine) {
+          contentEl = textLine;
+        } else if (queryContent) {
+          contentEl = queryContent;
+        } else {
+          // Last resort: grab innerText but strip the visually-hidden span text
+          contentEl = null;
+          const hidden = turn.querySelector('.cdk-visually-hidden');
+          const hiddenText = hidden?.innerText?.trim() ?? '';
+          const raw = turn.innerText.trim();
+          const content = hiddenText && raw.startsWith(hiddenText)
+            ? raw.slice(hiddenText.length).trim()
+            : raw;
+          if (content) messages.push({ role: 'user', content });
+          continue;
+        }
+      } else {
+        // <message-content> holds the response markdown without the
+        // "Gemini said" aria prefix on <model-response>
+        contentEl =
+          turn.querySelector('message-content, .response-content, .markdown') ??
+          turn;
+      }
+
+      const content = contentEl.innerText.trim();
+      if (content) {
+        messages.push({ role: isUser ? 'user' : 'assistant', content });
+      }
+    }
+
+    return messages;
+  }
+
+  function scrapeGeminiHeuristic() {
+    // Emergency fallback: scan for class-name fragments if custom elements vanish
+    const messages = [];
+    const candidates = document.querySelectorAll(
+      '[class*="user-query"], [class*="model-response"], [class*="message-content"]',
+    );
+
+    for (const el of candidates) {
+      const text = el.innerText?.trim() ?? '';
+      if (text.length < 3) continue;
+
+      // Skip nested matches (avoid double-counting child containers)
+      const parentMatched = el.parentElement?.closest(
+        '[class*="user-query"], [class*="model-response"], [class*="message-content"]',
+      );
+      if (parentMatched) continue;
+
+      const cls = (el.getAttribute('class') ?? '').toLowerCase();
+      const isUser = cls.includes('user-query');
+      messages.push({ role: isUser ? 'user' : 'assistant', content: text });
+    }
+
+    return messages;
+  }
+
 
   function scrapeMessages() {
     const provider = detectProvider();
