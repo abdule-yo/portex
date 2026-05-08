@@ -42,16 +42,39 @@
   }
 
   // Claude: turns tagged with data-testid="human-turn" / "ai-turn"
+  // Updates 2026: Added user-message, assistant-message, and font-claude-response
   function scrapeClaude() {
-    const turns = document.querySelectorAll(
-      '[data-testid="human-turn"], [data-testid="ai-turn"]',
-    );
+    const selector = [
+      '[data-testid="human-turn"]',
+      '[data-testid="ai-turn"]',
+      '[data-testid="user-message"]',
+      '[data-testid="assistant-message"]',
+      '.font-claude-response',
+      '.font-user-message'
+    ].join(',');
+
+    const allElements = Array.from(document.querySelectorAll(selector));
     const messages = [];
 
-    for (const turn of turns) {
-      const isUser = turn.getAttribute('data-testid') === 'human-turn';
-      const content = turn.innerText.trim();
-      if (content) messages.push({ role: isUser ? 'user' : 'assistant', content });
+    for (const el of allElements) {
+      // Avoid nested matches: if a parent already matches the selector, skip this one
+      if (el.parentElement?.closest(selector)) {
+        continue;
+      }
+
+      const testId = el.getAttribute('data-testid');
+      const isUser = 
+        testId === 'human-turn' || 
+        testId === 'user-message' || 
+        el.classList.contains('font-user-message');
+      
+      const content = el.innerText.trim();
+      if (content) {
+        messages.push({ 
+          role: isUser ? 'user' : 'assistant', 
+          content 
+        });
+      }
     }
 
     return messages;
