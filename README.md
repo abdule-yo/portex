@@ -95,6 +95,8 @@ All Go functions are registered on `globalThis` and wrapped by `WasmBridge` in J
 | `generateSessionID()` | `{ok, data}` | UUID v4 |
 | `searchSessions(sessionsJSON, keyword)` | `{ok, data}` | Filter by keyword |
 | `callAIAPI(apiKey, model, prompt)` | `Promise<{ok, data}>` | Call OpenAI or Anthropic |
+| `addTag(sessionJSON, tag)` | `{ok, data}` | Append unique tag to session (case-insensitive dedup) |
+| `removeTag(sessionJSON, tag)` | `{ok, data}` | Remove tag from session (case-insensitive) |
 
 ## Data Model
 
@@ -148,9 +150,9 @@ To help you get started quickly:
 
 - [x] ChatGPT end-to-end (save, summarize, inject)
 - [x] Claude end-to-end
-- [ ] Gemini scraper support
-- [ ] Session tagging and filtering
-- [ ] Import sessions from JSON
+- [x] Gemini scraper support
+- [x] Session tagging and filtering
+- [x] Import sessions from JSON
 - [ ] TinyGo build for smaller WASM binary
 
 ## License

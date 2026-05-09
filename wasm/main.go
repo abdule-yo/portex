@@ -15,6 +15,8 @@ func main() {
 	js.Global().Set("generateSessionID", js.FuncOf(generateSessionID))
 	js.Global().Set("searchSessions", js.FuncOf(searchSessions))
 	js.Global().Set("callAIAPI", js.FuncOf(callAIAPI))
+	js.Global().Set("addTag", js.FuncOf(addTag))
+	js.Global().Set("removeTag", js.FuncOf(removeTag))
 
 	js.Global().Set("wasmReady", js.ValueOf(true))
 

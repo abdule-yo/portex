@@ -43,6 +43,11 @@ const dom = {
   modelSelect:    $('model-select'),
   btnSaveSettings:$('btn-save-settings'),
   toast:          $('toast'),
+  tagRow:         $('tag-row'),
+  tagInput:       $('tag-input'),
+  btnAddTag:      $('btn-add-tag'),
+  btnImport:      $('btn-import'),
+  fileImport:     $('file-import'),
 };
 
 async function init() {
@@ -159,6 +164,31 @@ function buildSessionItem(session) {
 
   meta.appendChild(title);
   meta.appendChild(sub);
+
+  // Tag chips
+  if (session.tags?.length > 0) {
+    const tagsEl = document.createElement('div');
+    tagsEl.className = 'session-tags';
+    for (const tag of session.tags) {
+      const chip = document.createElement('span');
+      chip.className = 'tag-chip';
+      chip.textContent = tag;
+
+      const removeBtn = document.createElement('button');
+      removeBtn.className = 'tag-chip-remove';
+      removeBtn.title = `Remove tag “${tag}”`;
+      removeBtn.textContent = '×';
+      removeBtn.addEventListener('click', (e) => {
+        e.stopPropagation(); // don’t re-select the session
+        handleRemoveTag(session.id, tag);
+      });
+
+      chip.appendChild(removeBtn);
+      tagsEl.appendChild(chip);
+    }
+    meta.appendChild(tagsEl);
+  }
+
   item.appendChild(badge);
   item.appendChild(meta);
 
@@ -190,6 +220,9 @@ function selectSession(id) {
   dom.btnInject.disabled    = !hasSelection;
   dom.injectTarget.disabled = !hasSelection;
 
+  // Show/hide the tag input row
+  dom.tagRow.classList.toggle('visible', hasSelection);
+  dom.tagInput.value = '';
 }
 
 async function handleSaveChat() {
@@ -332,6 +365,107 @@ async function handleDelete() {
   showToast('Session deleted');
 }
 
+async function handleAddTag() {
+  if (!selectedId) return;
+  const tag = dom.tagInput.value.trim();
+  if (!tag) return;
+
+  const session = sessions.find((s) => s.id === selectedId);
+  if (!session) return;
+
+  try {
+    const updatedJSON = await WasmBridge.addTag(JSON.stringify(session), tag);
+    const updated = JSON.parse(updatedJSON);
+    sessions = sessions.map((s) => (s.id === selectedId ? updated : s));
+    await saveSessions(sessions);
+    dom.tagInput.value = '';
+    renderSessions(sessions);
+    selectSession(selectedId);
+  } catch (err) {
+    showToast('Add tag failed: ' + err.message, 'error');
+  }
+}
+
+async function handleRemoveTag(sessionId, tag) {
+  const session = sessions.find((s) => s.id === sessionId);
+  if (!session) return;
+
+  try {
+    const updatedJSON = await WasmBridge.removeTag(JSON.stringify(session), tag);
+    const updated = JSON.parse(updatedJSON);
+    sessions = sessions.map((s) => (s.id === sessionId ? updated : s));
+    await saveSessions(sessions);
+    renderSessions(sessions);
+    selectSession(selectedId);
+  } catch (err) {
+    showToast('Remove tag failed: ' + err.message, 'error');
+  }
+}
+
+async function handleImport() {
+  dom.fileImport.click();
+}
+
+async function handleFileSelected(file) {
+  if (!file) return;
+
+  let raw;
+  try {
+    raw = await file.text();
+  } catch {
+    showToast('Could not read file', 'error');
+    return;
+  }
+
+  let parsed;
+  try {
+    parsed = JSON.parse(raw);
+  } catch {
+    showToast('Invalid JSON file', 'error', 4000);
+    return;
+  }
+
+  // Accept a single session object or an array of sessions
+  const candidates = Array.isArray(parsed) ? parsed : [parsed];
+
+  const existingIds = new Set(sessions.map((s) => s.id));
+  const imported = [];
+  const errors   = [];
+
+  for (const candidate of candidates) {
+    try {
+      const validatedJSON = await WasmBridge.deserializeSession(JSON.stringify(candidate));
+      const session = JSON.parse(validatedJSON);
+      if (existingIds.has(session.id)) {
+        errors.push(`Duplicate: ${session.title || session.id}`);
+        continue;
+      }
+      imported.push(session);
+      existingIds.add(session.id);
+    } catch (err) {
+      errors.push(`Skipped: ${err.message}`);
+    }
+  }
+
+  if (imported.length === 0) {
+    showToast(errors[0] ?? 'No valid sessions found', 'error', 4000);
+    return;
+  }
+
+  // Prepend newest first
+  sessions = [...imported.reverse(), ...sessions];
+  await saveSessions(sessions);
+  renderSessions(sessions);
+
+  const msg = imported.length === 1
+    ? `Imported “${imported[0].title || 'session'}”`
+    : `Imported ${imported.length} sessions`;
+  showToast(msg + (errors.length ? ` (⚠️ ${errors.length} skipped)` : ''), 'success', 3500);
+
+  // Reset file input so the same file can be re-picked if needed
+  dom.fileImport.value = '';
+}
+
 async function handleSaveSettings() {
   const rawKey = dom.apiKeyInput.value.trim();
   // Only update if it's not the masked placeholder dots
@@ -372,6 +506,13 @@ function bindEvents() {
   dom.btnExport.addEventListener('click', handleExport);
   dom.btnDelete.addEventListener('click', handleDelete);
   dom.btnSaveSettings.addEventListener('click', handleSaveSettings);
+  dom.btnImport.addEventListener('click', handleImport);
+  dom.fileImport.addEventListener('change', (e) => handleFileSelected(e.target.files[0]));
+
+  dom.btnAddTag.addEventListener('click', handleAddTag);
+  dom.tagInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') { e.preventDefault(); handleAddTag(); }
+  });
 
   dom.tabSessions.addEventListener('click', () => switchTab('sessions-view'));
   dom.tabSettings.addEventListener('click', () => switchTab('settings-view'));

@@ -123,7 +123,73 @@
       }
       .session-provider-badge.chatgpt { background: #1a3a2a; color: #52c77f; }
       .session-provider-badge.claude  { background: #2a1a3a; color: #a07cf7; }
-      .session-provider-badge.gemini  { background: #3a2a1a; color: #e5a550; }
+      .session-provider-badge.gemini  { background: #1a2a3a; color: #4da6ff; }
+
+      /* ── Tag chips ── */
+      .session-tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 4px;
+        margin-top: 4px;
+      }
+      .tag-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 3px;
+        font-size: 10px;
+        padding: 1px 6px;
+        border-radius: 99px;
+        background: #1e1e2e;
+        border: 1px solid var(--border);
+        color: var(--accent);
+        cursor: default;
+        line-height: 1.6;
+      }
+      .tag-chip-remove {
+        cursor: pointer;
+        color: var(--muted);
+        font-size: 11px;
+        line-height: 1;
+        padding: 0 1px;
+        border: none;
+        background: none;
+      }
+      .tag-chip-remove:hover { color: var(--danger); }
+
+      /* ── Tag input row (shown below selected session) ── */
+      #tag-row {
+        display: none;
+        gap: 5px;
+        padding: 0 12px 8px;
+        align-items: center;
+      }
+      #tag-row.visible { display: flex; }
+      #tag-input {
+        flex: 1;
+        padding: 5px 9px;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        color: var(--text);
+        font-size: 11px;
+        outline: none;
+        transition: border-color 0.15s;
+      }
+      #tag-input:focus { border-color: var(--accent); }
+      #tag-input::placeholder { color: var(--muted); }
+      #btn-add-tag {
+        padding: 5px 10px;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        color: var(--accent);
+        font-size: 11px;
+        font-weight: 500;
+        cursor: pointer;
+        white-space: nowrap;
+        transition: background 0.15s, border-color 0.15s;
+      }
+      #btn-add-tag:hover { background: #1e1a3a; border-color: var(--accent); }
 
       .session-meta { flex: 1; min-width: 0; }
       .session-title {
@@ -155,7 +221,7 @@
 
       #action-bar {
         display: grid;
-        grid-template-columns: 1fr 1fr 1fr;
+        grid-template-columns: 1fr 1fr 1fr 1fr;
         gap: 6px;
         padding: 10px 12px;
         border-top: 1px solid var(--border);
@@ -298,8 +364,13 @@
 
       <div id="sessions-list">
         <div id="sessions-empty">
-          No saved sessions yet.<br />Open a ChatGPT or Claude chat and click <strong>Save Chat</strong>.
+          No saved sessions yet.<br />Open a ChatGPT, Claude, or Gemini chat and click <strong>Save Chat</strong>.
         </div>
+      </div>
+
+      <div id="tag-row">
+        <input id="tag-input" type="text" placeholder="Add tag… (press Enter)" autocomplete="off" maxlength="32" />
+        <button id="btn-add-tag">+ Tag</button>
       </div>
 
       <div id="inject-row">
@@ -315,6 +386,7 @@
         <button id="btn-save">Save Current Chat</button>
         <button id="btn-summarize" disabled>Summarize</button>
         <button id="btn-export" disabled>Export</button>
+        <button id="btn-import">Import</button>
         <button id="btn-delete" disabled>Delete</button>
       </div>
     </div>
@@ -337,6 +409,9 @@
     </div>
 
     <div id="toast"></div>
+
+    <!-- Hidden file input for JSON import -->
+    <input id="file-import" type="file" accept=".json,application/json" style="display:none" />
 
     <!-- Load order matters: Go runtime → bridge → app -->
     <script src="wasm_exec.js"></script>

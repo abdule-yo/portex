@@ -82,4 +82,6 @@ const WasmBridge = Object.freeze({
   generateSessionID:  () => _call('generateSessionID'),
   searchSessions:     (sessionsJSON, keyword) => _call('searchSessions', sessionsJSON, keyword),
   callAIAPI:          (apiKey, model, prompt) => _call('callAIAPI', apiKey, model, prompt),
+  addTag:             (sessionJSON, tag) => _call('addTag', sessionJSON, tag),
+  removeTag:          (sessionJSON, tag) => _call('removeTag', sessionJSON, tag),
 });
